@@ -28,6 +28,7 @@ Following environment variables are used by the software.
 * **CLIENT_SECRET** Client secret for your application.
 
 **Optional**
+* **HOSTNAME** Hostname to listen for requests. Defaults to all interfaces (0.0.0.0).
 * **PORT** Port to listen for requests. Default is 8080.
 * **SKIP_AUTH_URI** Space separated whitelist of URIs like "/info /health" to bypass authorization. Contains nothing by default.
 

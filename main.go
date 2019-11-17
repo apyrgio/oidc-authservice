@@ -22,6 +22,7 @@ import (
 // Option Defaults
 const (
 	defaultHealthServerPort  = "8081"
+	defaultServerHostname    = ""
 	defaultServerPort        = "8080"
 	defaultUserIDHeader      = "kubeflow-userid"
 	defaultUserIDTokenHeader = "kubeflow-userid-token"
@@ -80,6 +81,7 @@ func main() {
 	userIDPrefix := getEnvOrDefault("USERID_PREFIX", defaultUserIDPrefix)
 	userIDClaim := getEnvOrDefault("USERID_CLAIM", defaultUserIDClaim)
 	// Server
+	hostname := getEnvOrDefault("HOSTNAME", defaultServerHostname)
 	port := getEnvOrDefault("PORT", defaultServerPort)
 	// Store
 	storePath := getEnvOrDie("STORE_PATH")
@@ -157,6 +159,6 @@ func main() {
 	router.PathPrefix("/").HandlerFunc(s.authenticate)
 
 	// Start server
-	log.Infof("Starting web server at %v", port)
-	log.Fatal(http.ListenAndServe(":"+port, handlers.CORS()(router)))
+	log.Infof("Starting web server at %v:%v", hostname, port)
+	log.Fatal(http.ListenAndServe(hostname+":"+port, handlers.CORS()(router)))
 }

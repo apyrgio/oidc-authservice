@@ -5,16 +5,16 @@ import sys
 import stat
 import logging
 import tarfile
-import requests
 import argparse
 import tempfile
+import urllib.request
 
 log = logging.getLogger(__name__)
 
 KUSTOMIZE_URL = "https://github.com/kubernetes-sigs/kustomize/releases/download/v3.2.0/kustomize_3.2.0_linux_amd64"
 GO_URL = "https://dl.google.com/go/go1.14.1.linux-amd64.tar.gz"
 KUBECTL_URL = "https://storage.googleapis.com/kubernetes-release/release/v1.18.2/bin/linux/amd64/kubectl"
-K3D_URL = "https://github.com/rancher/k3d/releases/download/v3.0.0-rc.0/k3d-linux-amd64"
+K3D_URL = "https://github.com/rancher/k3d/releases/download/v3.0.1/k3d-linux-amd64"
 
 
 def parse_args():
@@ -26,8 +26,9 @@ def parse_args():
 
 def download_to(url, output_path):
     with open(output_path, "wb") as f:
-        res = requests.get(url)
-        f.write(res.content)
+        res = urllib.request.urlopen(url)
+        data = res.read()
+        f.write(data)
 
 
 def download_from_tar(url, output_dir, paths_inside_tar=[], flatten=True):

@@ -324,20 +324,35 @@ func waitForDeployment(
 }
 
 func createK3DCluster() error {
-	cmd := exec.Command("k3d", "create", "cluster", "e2e-test-cluster", "--k3s-server-arg",
-		"--no-deploy=traefik", "--no-lb", "--wait", "--timeout", "5m")
+	// FIXME: Maybe create a random cluster everytime?
+	cmd := exec.Command("k3d", "cluster", "create", "e2e-test-cluster", "--k3s-server-arg",
+	    "--no-deploy=traefik", "--no-lb", "--wait", "--timeout", "5m",
+		"--update-default-kubeconfig=false")
 	cmd.Stderr, cmd.Stdout = os.Stderr, os.Stdout
 	err := cmd.Run()
 	if err != nil {
 		return err
 	}
-	kubeconfigPath := path.Join(os.Getenv("HOME"), ".kube/config")
-	return exec.Command("k3d", "get", "kubeconfig", "e2e-test-cluster",
-		"--switch", "--output", kubeconfigPath).Run()
+
+	cmd = exec.Command("k3d", "kubeconfig", "write", "e2e-test-cluster")
+	err = cmd.Run()
+	if err != nil {
+		return err
+	}
+
+	// FIXME: Get this from the command's output.
+	kubeconfigPath := path.Join(os.Getenv("HOME"), ".k3d/kubeconfig-e2e-test-cluster.yaml")
+	os.Setenv("KUBECONFIG", kubeconfigPath)
+
+	// FIXME: Get this from the command's output.
+	imageName := os.Getenv("TEST_IMAGE")
+	cmd = exec.Command("k3d", "image", "import", "-c", "e2e-test-cluster", imageName)
+	cmd.Stderr, cmd.Stdout = os.Stderr, os.Stdout
+	return cmd.Run()
 }
 
 func deleteK3DCluster() error {
-	return exec.Command("k3d", "delete", "cluster", "e2e-test-cluster").Run()
+	return exec.Command("k3d", "cluster", "delete", "e2e-test-cluster").Run()
 }
 
 func applyKustomizations(kustomizations []string) error {

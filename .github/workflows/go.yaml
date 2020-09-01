@@ -2,16 +2,15 @@ name: Go
 
 on:
   push:
-    branches: [ master ]
   pull_request:
     branches: [ master ]
+  schedule:
+    - cron: '0 0 * * *' # Run every day at 00:00 UTC.
 
 jobs:
 
   ci:
     name: CI
-    env:
-      IMG: gcr.io/arrikto-ci/authservice
     runs-on: ubuntu-18.04
     steps:
       - name: Check out code
@@ -30,15 +29,6 @@ jobs:
 
       - name: Unit tests
         run: make test
-
-      - name: Setup gcloud CLI
-        uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
-        with:
-          version: '290.0.1'
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
-
-      - name: Configure Docker with GCR
-        run: gcloud auth configure-docker
 
       - name: E2E Test
         run: make e2e

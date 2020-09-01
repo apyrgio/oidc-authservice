@@ -5,9 +5,9 @@ import sys
 import stat
 import logging
 import tarfile
-import requests
 import argparse
 import tempfile
+import urllib.request
 
 log = logging.getLogger(__name__)
 
@@ -26,8 +26,9 @@ def parse_args():
 
 def download_to(url, output_path):
     with open(output_path, "wb") as f:
-        res = requests.get(url)
-        f.write(res.content)
+        res = urllib.request.urlopen(url)
+        data = res.read()
+        f.write(data)
 
 
 def download_from_tar(url, output_dir, paths_inside_tar=[], flatten=True):

@@ -50,7 +50,6 @@ publish: docker-build docker-push
 
 bin/deps:
 	mkdir -p bin/deps
-	pip3 install --user -r hack/requirements.txt
 	hack/binary_deps.py bin/deps
 
 .PHONY: all build docker-build docker-push docs e2e publish bin/deps

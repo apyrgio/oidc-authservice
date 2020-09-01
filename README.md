@@ -31,7 +31,7 @@ The AuthService contains two server processes.
   the authservice will reply with a redirect to initiate the OIDC login.
 * A web server, to host necessary endpoints that need to be accessible to the user. These endpoints
   include the OIDC client redirect URL, the logout endpoint and helper HTML pages.
- 
+
 ## Options
 
 Following environment variables are used by the software.
